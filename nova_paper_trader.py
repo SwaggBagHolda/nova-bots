@@ -15,7 +15,7 @@ STATE_FILE    = "/tmp/paper_portfolio.json"
 BASE44_URL    = "https://app.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
 TOKEN         = os.environ.get("BASE44_SERVICE_TOKEN", "")
 SIZE          = 1000.0    # $ per trade
-MIN_SCORE     = 62        # brain score gate
+MIN_SCORE     = 72        # brain score gate
 SL_PCT        = 0.006     # 0.6% stop loss
 TP_PCT        = 0.014     # 1.4% take profit  (1:2.3 R:R)
 MAX_POSITIONS = 3
@@ -32,6 +32,8 @@ ASSETS = {
 }
 # Blacklisted per standing rules
 BLACKLIST = {"SOLUSD", "LINKUSD"}
+# XRP on watch — 50% WR, one more losing run = blacklist
+XRP_TRADES = []
 
 def log(msg):
     ts = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
