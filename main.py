@@ -7,6 +7,10 @@ import threading, time, os, sys
 import nova_candle_predictor as predictor
 from datetime import datetime, timezone, timedelta
 
+TURBO_CONFIDENCE = 50
+NORMAL_CONFIDENCE = 65
+TURBO_THRESHOLD = 50
+
 def log(msg):
     print(f"[{datetime.now().strftime('%m/%d %H:%M')}] {msg}", flush=True)
 
@@ -29,7 +33,7 @@ def run_chop_scalper():
             cs.run()
         except Exception as e:
             log(f"[ChopScalper ERROR] {e}")
-        time.sleep(300)  # 5 min interval
+        time.sleep(120)  # 5 min interval
 
 def run_breakout_trader():
     """Breakout Trader v4 — ADX breakout with trailing stops"""
@@ -40,7 +44,7 @@ def run_breakout_trader():
             bt.run()
         except Exception as e:
             log(f"[BreakoutTrader ERROR] {e}")
-        time.sleep(300)
+        time.sleep(120)
 
 def run_trend_rider():
     """Trend Rider — pure trend following, no fixed target"""
@@ -51,7 +55,7 @@ def run_trend_rider():
             tr.run()
         except Exception as e:
             log(f"[TrendRider ERROR] {e}")
-        time.sleep(300)
+        time.sleep(120)
 
 def run_universal_scalper():
     """Universal Scalper — multi-strategy, multi-asset"""
@@ -62,7 +66,7 @@ def run_universal_scalper():
             us.run()
         except Exception as e:
             log(f"[UniversalScalper ERROR] {e}")
-        time.sleep(300)
+        time.sleep(120)
 
 def run_forex_scalper():
     """Forex Scalper — EUR/USD, GBP/USD during market hours"""
@@ -73,7 +77,7 @@ def run_forex_scalper():
             fs.run()
         except Exception as e:
             log(f"[ForexScalper ERROR] {e}")
-        time.sleep(300)
+        time.sleep(120)
 
 def run_futures_scalper():
     """Futures Scalper — ES/NQ proxy via ETFs"""
@@ -84,7 +88,7 @@ def run_futures_scalper():
             futs.run()
         except Exception as e:
             log(f"[FuturesScalper ERROR] {e}")
-        time.sleep(300)
+        time.sleep(120)
 
 def run_pattern_scanner():
     """Pattern Scanner — whale watcher, fires alert on signal >= 7/10"""
@@ -160,4 +164,4 @@ if __name__ == "__main__":
     while True:
         alive = [t.name for t in threads if t.is_alive()]
         log(f"Active threads: {len(alive)}/8 — {', '.join(alive)}")
-        time.sleep(300)
+        time.sleep(120)
