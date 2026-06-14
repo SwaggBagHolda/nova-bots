@@ -159,6 +159,14 @@ def health_server():
                 count      = get_trade_count()
                 confidence = get_confidence_threshold()
                 mode       = "TURBO LEARNING" if count < TURBO_THRESHOLD else "PRECISION"
+                # get brain size
+                brain_size = 0
+                try:
+                    import os as _os
+                    hf = "/tmp/candle_predictor_history.json"
+                    if _os.path.exists(hf):
+                        brain_size = len(json.load(open(hf)))
+                except: pass
                 status = {
                     "status": "online",
                     "mode": mode,
@@ -167,6 +175,7 @@ def health_server():
                     "confidence_threshold": confidence,
                     "trades_logged": count,
                     "trades_until_precision": max(0, TURBO_THRESHOLD - count),
+                    "brain_training_records": brain_size,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "bots": [
                         "Chop Scalper v5",
@@ -197,6 +206,28 @@ def health_server():
     server.serve_forever()
 
 if __name__ == "__main__":
+    # ── SEED CANDLE PREDICTOR BRAIN ON STARTUP ──────────────────────────
+    seed_file = os.path.join(os.path.dirname(__file__), "brain_seed.json")
+    history_file = "/tmp/candle_predictor_history.json"
+    try:
+        if os.path.exists(seed_file):
+            seed_data = json.load(open(seed_file))
+            # Merge with any existing local history
+            existing = []
+            if os.path.exists(history_file):
+                try: existing = json.load(open(history_file))
+                except: pass
+            # Only add seed records not already present (by logged_at)
+            existing_times = {r.get("logged_at") for r in existing}
+            new_records = [r for r in seed_data if r.get("logged_at") not in existing_times]
+            merged = existing + new_records
+            merged = merged[-500:]  # keep last 500
+            json.dump(merged, open(history_file, "w"), indent=2)
+            log(f"Brain seeded: {len(merged)} training records loaded ({len(new_records)} new)")
+    except Exception as se:
+        log(f"Brain seed warning: {se}")
+    # ─────────────────────────────────────────────────────────────────────
+
     log("=== Nova Bot Suite — TURBO LEARNING MODE ===")
     log(f"Scan interval: {SCAN_INTERVAL}s | Confidence: {TURBO_CONFIDENCE}% → {NORMAL_CONFIDENCE}% after {TURBO_THRESHOLD} trades")
     log("Assets: ETH, ADA, XRP, UNI, EUR/USD, GBP/USD, BTC, AVAX")
