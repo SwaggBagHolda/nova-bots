@@ -4,6 +4,7 @@ Nova Trading Bot Suite — Railway Deploy
 Runs all bots in parallel threads, 24/7
 """
 import threading, time, os, sys
+import nova_candle_predictor as predictor
 from datetime import datetime, timezone, timedelta
 
 def log(msg):
