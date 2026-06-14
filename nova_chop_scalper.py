@@ -12,6 +12,9 @@ Quant-audited rebuild. Fixes:
 - Proper position sizing ($risk / stop_pct)
 """
 import urllib.request, urllib.parse, json, os, math, random
+try:
+    from nova_db_logger import post_trade as _db_post
+except: _db_post = None
 from datetime import datetime, timezone, timedelta
 
 API_KEY    = "PKHFMGMEDX45XRMPT4OWYIKKR4"
@@ -263,6 +266,11 @@ def log_trade(sym,side,ep,xp,pusd,ppct,reason,states_with_next):
         try: t=json.load(open(LOG_FILE))
         except: pass
     t.append(rec);json.dump(t,open(LOG_FILE,"w"),indent=2)
+    # ── POST TO BASE44 DB (persistent learning) ──────────────────────────
+    if _db_post:
+        import threading
+        threading.Thread(target=_db_post, args=(BOT_NAME,sym,side,ep,xp,pusd,ppct,reason), daemon=True).start()
+    # ─────────────────────────────────────────────────────────────────────
     train(sym, states_with_next)
     print(f"  [{'WIN' if pusd>0 else 'LOSS'}][CHOP] {sym} {ppct:+.3f}% ${pusd:+.1f} | {reason}")
 

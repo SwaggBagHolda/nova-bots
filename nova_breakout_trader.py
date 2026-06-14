@@ -109,6 +109,16 @@ def adx_val(bars,p=14):
 
 def learn_after_trade(sym,side,entry,exit_p,stop_dist,reason,bars_held,indicators):
     try:
+        # ── POST TO BASE44 DB (persistent) ───────────────────────────────
+        try:
+            from nova_db_logger import post_trade as _db_post
+            pnl_pct = ((exit_p - entry) / entry * 100) if side == 'long' else ((entry - exit_p) / entry * 100)
+            pnl_usd = pnl_pct * 10  # approximate
+            status = "WIN" if pnl_usd > 0 else "LOSS"
+            import threading
+            threading.Thread(target=_db_post, args=(BOT_NAME, sym, side.upper(), entry, exit_p, pnl_usd, pnl_pct, reason, status), daemon=True).start()
+        except Exception as dbe: print(f"[DB] {dbe}")
+        # ─────────────────────────────────────────────────────────────────
         sys.path.insert(0,'/root')
         spec=importlib.util.spec_from_file_location("tl","/tmp/nova_trade_logger.py")
         tl=importlib.util.module_from_spec(spec); spec.loader.exec_module(tl)

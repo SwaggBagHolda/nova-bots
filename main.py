@@ -20,6 +20,12 @@ def log(msg):
     print(f"[{datetime.now().strftime('%m/%d %H:%M')}] {msg}", flush=True)
 
 def get_trade_count():
+    # Try DB first (persistent across restarts)
+    try:
+        from nova_db_logger import get_trade_count as _db_count
+        return _db_count()
+    except: pass
+    # Fallback to local file
     try:
         h = json.load(open(HISTORY_FILE))
         return len(h)
