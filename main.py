@@ -140,14 +140,13 @@ def run_options_scanner():
         time.sleep(300)
 
 def run_forward_test_loop():
-    import nova_forward_test as fwd
-    log("Forward Test Engine started [brain validation]")
-    while True:
-        try:
-            fwd.run_forward_test()
-        except Exception as e:
-            log(f"[ForwardTest ERROR] {e}")
-        time.sleep(3600)  # Re-validate brain every hour
+    import nova_paper_trader as pt
+    log("Paper Trader LIVE started — real prices, $1k/trade, brain-scored entries")
+    try:
+        pt.run_paper_trader()
+    except Exception as e:
+        log(f"[PaperTrader ERROR] {e}")
+        time.sleep(60)
 
 def health_server():
     from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -187,7 +186,7 @@ def health_server():
                         "Pattern Scanner",
                         "Breakout Hunter (OANDA)",
                         "Options Scanner",
-                        "Forward Test Engine"
+                        "Paper Trader Live"
                     ]
                 }
                 body = json.dumps(status, indent=2).encode()
@@ -243,7 +242,7 @@ if __name__ == "__main__":
         threading.Thread(target=run_pattern_scanner,   daemon=True, name="PatternScanner"),
         threading.Thread(target=run_breakout_hunter,    daemon=True, name="BreakoutHunter"),
         threading.Thread(target=run_options_scanner,     daemon=True, name="OptionsScanner"),
-        threading.Thread(target=run_forward_test_loop,   daemon=True, name="ForwardTest"),
+        threading.Thread(target=run_forward_test_loop,   daemon=True, name="PaperTrader"),
     ]
 
     for t in threads:
