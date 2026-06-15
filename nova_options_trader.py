@@ -196,12 +196,22 @@ def scan_once():
         avg_v = sum(b['v'] for b in bars[-10:]) / 10
         vol_surge = bars[-1]['v'] >= avg_v * 1.3
 
+        # Use PRIOR bars only for indicators — no lookahead
+        prior_bars   = bars[:-1]
+        prior_closes = [b['c'] for b in prior_bars]
+        prior_vw  = vwap(prior_bars)
+        prior_e9  = ema(prior_closes[-20:], 9)
+        prior_e21 = ema(prior_closes[-30:], 21)
+        prior_rsi = rsi(prior_closes)
+        avg_v_p   = sum(b['v'] for b in prior_bars[-10:]) / 10
+        vol_surge = bars[-1]['v'] >= avg_v_p * 1.3
+
         direction = None
-        # CALL setup: price > VWAP, EMA trending up, RSI 50-72, volume surge
-        if curr > vw and e9 > e21 and 50 <= r_val <= 72 and vol_surge:
+        # CALL: price breaks above prior VWAP, EMAs trending up, RSI not overbought
+        if curr > prior_vw and prior_e9 > prior_e21 and 45 <= prior_rsi <= 68 and vol_surge:
             direction = "CALL"
-        # PUT setup: price < VWAP, EMA trending down, RSI 28-50, volume surge
-        elif curr < vw and e9 < e21 and 28 <= r_val <= 50 and vol_surge:
+        # PUT: price breaks below prior VWAP, EMAs trending down, RSI not oversold
+        elif curr < prior_vw and prior_e9 < prior_e21 and 32 <= prior_rsi <= 55 and vol_surge:
             direction = "PUT"
 
         if not direction:
