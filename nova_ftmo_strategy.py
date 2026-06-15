@@ -1,3 +1,4 @@
+import nova_logger
 #!/usr/bin/env python3
 """
 Nova FTMO Live Paper Trader — XAU/USD + EUR/USD + GBP/USD
@@ -147,7 +148,7 @@ def close_trade(sym, reason, price):
     pct=pnl/ACCOUNT*100; status="WIN" if pnl>0 else "LOSS"
     total_p=(equity-ACCOUNT)/ACCOUNT*100
     log(f"{'✅' if pnl>0 else '❌'} CLOSED {sym} {pos['side'].upper()} | {reason} | ${pnl:+.2f} ({pct:+.2f}%) | equity=${equity:.0f} total={total_p:+.2f}%")
-    log_db(sym,pos["side"].upper(),pos["entry"],price,pnl,pct,status,reason)
+    nova_logger.log_trade('FTMO Live Paper',sym,pos['side'].upper(),pos['entry'],price,pnl,pct,status,reason)
     check_phase()
 
 def run():

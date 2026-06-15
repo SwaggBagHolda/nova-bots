@@ -1,3 +1,4 @@
+import nova_logger
 #!/usr/bin/env python3
 """
 Nova Trading Bot Suite — Railway Deploy
