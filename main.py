@@ -48,6 +48,17 @@ def is_ny_session():
     )
 
 
+
+def run_options_trader():
+    import nova_options_trader as ot
+    log("Options Trader started — SPY/QQQ 0DTE Calls & Puts | Power Hours")
+    ot.run()
+
+def run_ftmo_strategy():
+    import nova_ftmo_strategy as ftmo
+    log("FTMO Strategy started — 8 Forex pairs | Phase 1 sim | 10k account")
+    ftmo.run()
+
 def run_stocks_scalper():
     import nova_stocks_scalper as ss
     log("Stocks Scalper started — SPY/QQQ/NVDA/AMZN | POWER HOURS ONLY")
@@ -175,7 +186,7 @@ def health_server():
                 status = {
                     "status": "online",
                     "mode": mode,
-                    "bots_running": 11,
+                    "bots_running": 13,
                     "scan_interval_sec": SCAN_INTERVAL,
                     "confidence_threshold": confidence,
                     "trades_logged": count,
@@ -239,6 +250,8 @@ if __name__ == "__main__":
 
     threads = [
         threading.Thread(target=health_server,         daemon=True, name="HealthServer"),
+        threading.Thread(target=run_options_trader,  daemon=True, name="OptionsTrader"),
+        threading.Thread(target=run_ftmo_strategy,  daemon=True, name="FTMOStrategy"),
         threading.Thread(target=run_stocks_scalper,    daemon=True, name="StocksScalper"),
         threading.Thread(target=run_chop_scalper,      daemon=True, name="ChopScalper"),
         threading.Thread(target=run_breakout_trader,   daemon=True, name="BreakoutTrader"),
