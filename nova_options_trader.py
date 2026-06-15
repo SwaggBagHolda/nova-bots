@@ -26,7 +26,7 @@ SCAN_SEC      = 120
 CONTRACTS     = 1      # 1 contract = 100 shares
 
 B44_TOKEN = os.environ.get("BASE44_SERVICE_TOKEN", "")
-B44_URL   = "https://api.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
+B44_URL   = "https://app.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
 
 def log(msg):
     print(f"[OPTIONS {datetime.now().strftime('%H:%M')}] {msg}", flush=True)

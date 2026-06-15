@@ -209,7 +209,11 @@ def health_server():
                         "Pattern Scanner",
                         "Breakout Hunter (OANDA)",
                         "Options Scanner",
-                        "Paper Trader Live"
+                        "Paper Trader Live",
+                        "Stocks Scalper",
+                        "Options Trader",
+                        "FTMO Live Paper",
+                        "Forex Live Scalper"
                     ]
                 }
                 body = json.dumps(status, indent=2).encode()

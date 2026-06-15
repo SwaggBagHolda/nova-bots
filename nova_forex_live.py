@@ -37,7 +37,7 @@ SCAN_SEC   = 120
 MIN_BARS   = 25
 
 B44     = os.environ.get("BASE44_SERVICE_TOKEN","")
-B44_URL = "https://api.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
+B44_URL = "https://app.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
 
 equity      = ACCOUNT
 peak_equity = ACCOUNT

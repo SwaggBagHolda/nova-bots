@@ -30,7 +30,7 @@ SCAN_SEC = 120   # scan every 2 minutes during power hours
 
 # Base44 DB logging
 B44_TOKEN = os.environ.get("BASE44_SERVICE_TOKEN", "")
-B44_URL   = "https://api.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
+B44_URL   = "https://app.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
 
 def log(msg):
     ts = datetime.now().strftime("%m/%d %H:%M")
