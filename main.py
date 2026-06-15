@@ -47,6 +47,12 @@ def is_ny_session():
         (now.hour == 16 and now.minute == 0)
     )
 
+
+def run_stocks_scalper():
+    import nova_stocks_scalper as ss
+    log("Stocks Scalper started — SPY/QQQ/NVDA/AMZN | POWER HOURS ONLY")
+    ss.run()
+
 def run_chop_scalper():
     import nova_chop_scalper as cs
     log("Chop Scalper v5 thread started [TURBO]")
@@ -169,7 +175,7 @@ def health_server():
                 status = {
                     "status": "online",
                     "mode": mode,
-                    "bots_running": 10,
+                    "bots_running": 11,
                     "scan_interval_sec": SCAN_INTERVAL,
                     "confidence_threshold": confidence,
                     "trades_logged": count,
@@ -233,6 +239,7 @@ if __name__ == "__main__":
 
     threads = [
         threading.Thread(target=health_server,         daemon=True, name="HealthServer"),
+        threading.Thread(target=run_stocks_scalper,    daemon=True, name="StocksScalper"),
         threading.Thread(target=run_chop_scalper,      daemon=True, name="ChopScalper"),
         threading.Thread(target=run_breakout_trader,   daemon=True, name="BreakoutTrader"),
         threading.Thread(target=run_trend_rider,       daemon=True, name="TrendRider"),
