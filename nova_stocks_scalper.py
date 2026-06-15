@@ -32,7 +32,7 @@ VOL_M    = 1.5
 SCAN_SEC = 120   # scan every 2 minutes during power hours
 
 # Base44 DB logging
-B44_TOKEN = os.environ.get("BASE44_SERVICE_TOKEN", "")
+B44_TOKEN = os.environ.get("BASE44_SERVICE_TOKEN", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBiODExZS1kMGNlLTRkYjAtODVmZS0wYTE4MzZiZTVmNDciLCJjbGllbnRfaWQiOiI1NTBiODExZS1kMGNlLTRkYjAtODVmZS0wYTE4MzZiZTVmNDciLCJhcHBfaWQiOiI2OWJmODJjZThjNTI2YzM3OWJkYWIzY2UiLCJhdWQiOiJiYXNlNDRfYXBpIiwic2NvcGUiOiJhcHAuYWNjZXNzIiwiZXhwIjoxNzgxNTQ4MDI4LCJpYXQiOjE3ODE1NDQ0Mjh9.-j7b7k8WevY27CMESHTC-qpSuRjJfQGc4exMg9sL5aE")  # fallback
 B44_URL   = "https://app.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
 
 def log(msg):

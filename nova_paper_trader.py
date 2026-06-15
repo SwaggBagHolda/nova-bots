@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 HISTORY_FILE  = "/tmp/candle_predictor_history.json"
 STATE_FILE    = "/tmp/paper_portfolio.json"
 BASE44_URL    = "https://app.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
-TOKEN         = os.environ.get("BASE44_SERVICE_TOKEN", "")
+TOKEN         = os.environ.get("BASE44_SERVICE_TOKEN", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBiODExZS1kMGNlLTRkYjAtODVmZS0wYTE4MzZiZTVmNDciLCJjbGllbnRfaWQiOiI1NTBiODExZS1kMGNlLTRkYjAtODVmZS0wYTE4MzZiZTVmNDciLCJhcHBfaWQiOiI2OWJmODJjZThjNTI2YzM3OWJkYWIzY2UiLCJhdWQiOiJiYXNlNDRfYXBpIiwic2NvcGUiOiJhcHAuYWNjZXNzIiwiZXhwIjoxNzgxNTQ4MDI4LCJpYXQiOjE3ODE1NDQ0Mjh9.-j7b7k8WevY27CMESHTC-qpSuRjJfQGc4exMg9sL5aE")
 BASE_RISK_PCT = 0.08      # 8% of equity per trade (compounding)
 MIN_SCORE     = 72        # brain score gate
 SL_PCT        = 0.006     # 0.6% stop loss

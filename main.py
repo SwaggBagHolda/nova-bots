@@ -11,10 +11,10 @@ import nova_candle_predictor as predictor
 from datetime import datetime, timezone, timedelta
 
 HISTORY_FILE       = "/tmp/candle_predictor_history.json"
-TURBO_THRESHOLD    = 50    # trades before tightening confidence
-TURBO_CONFIDENCE   = 50    # confidence during learning phase
-NORMAL_CONFIDENCE  = 65    # confidence after 50 trades
-SCAN_INTERVAL      = 120   # 2 minutes (was 300)
+TURBO_THRESHOLD    = 25    # trades before tightening confidence
+TURBO_CONFIDENCE   = 62    # confidence during learning (was 50 — too loose)
+NORMAL_CONFIDENCE  = 72    # precision mode after 25 trades
+SCAN_INTERVAL      = 60    # 1 minute — faster learning
 PATTERN_INTERVAL   = 180   # 3 minutes for pattern scanner (was 600)
 
 def log(msg):
