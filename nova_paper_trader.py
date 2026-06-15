@@ -34,11 +34,22 @@ ASSETS = {
     "XRPUSD":  "ripple",
     "AVAXUSD": "avalanche-2",
     "UNIUSD":  "uniswap",
+    "MATICUSD":"matic-network",    # smooth ETH follower — ADA/UNI profile
+    "DOTUSD":  "polkadot",         # steady trend follower
+    "ATOMUSD": "cosmos",           # slow mover, clean channels
 }
 # Blacklisted per standing rules
 BLACKLIST = {"SOLUSD", "LINKUSD"}
 # Priority assets — proven 100% WR — get +8 score boost
-PRIORITY_BOOST = {"ADAUSD": 8, "UNIUSD": 8, "EURUSD": 5, "GBPUSD": 5}
+PRIORITY_BOOST = {
+    "ADAUSD":   8,   # 100% WR proven
+    "UNIUSD":   8,   # 100% WR proven
+    "MATICUSD": 5,   # ADA-profile candidate
+    "DOTUSD":   5,   # smooth trend follower
+    "ATOMUSD":  5,   # clean channel mover
+    "EURUSD":   5,   # institutional smooth
+    "GBPUSD":   3,
+}
 # XRP on watch — 50% WR, one more losing run = blacklist
 XRP_TRADES = []
 
@@ -217,6 +228,9 @@ def scan(state, prices, scan_num):
     # 2. LOOK FOR ENTRIES
     open_syms = {p["symbol"] for p in state["positions"]}
 
+    # Compound sizing: risk 8% of current equity per trade
+    equity_now = state["cash"] + len(state["positions"]) * 1000
+    SIZE = max(500, round(equity_now * BASE_RISK_PCT, 2))
     if len(state["positions"]) < MAX_POSITIONS and state["cash"] >= SIZE:
         candidates = []
         for sym, cur in prices.items():
@@ -224,10 +238,10 @@ def scan(state, prices, scan_num):
                 continue
             for side in ["LONG", "SHORT"]:
                 score = brain_score(sym, side.lower())
-                # Apply priority boost for proven high-WR assets
-        boosted_score = score + PRIORITY_BOOST.get(sym, 0)
-        if boosted_score >= MIN_SCORE:
-                    candidates.append((score, sym, side, cur))
+                # Priority boost: ADA/UNI +8, EUR/USD +5 (proven 100% WR assets)
+                boosted_score = score + PRIORITY_BOOST.get(sym, 0)
+                if boosted_score >= MIN_SCORE:
+                    candidates.append((boosted_score, sym, side, cur))
 
         candidates.sort(reverse=True)
 

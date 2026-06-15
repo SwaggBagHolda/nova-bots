@@ -21,6 +21,8 @@ DH   = {"APCA-API-KEY-ID": KEY, "APCA-API-SECRET-KEY": SEC}
 
 ASSETS   = ["SPY", "QQQ", "NVDA", "AMZN"]
 RISK_USD = 500
+TRAIL_TRIGGER_PCT = 0.008   # trail after 0.8% gain
+TRAIL_DIST_PCT    = 0.005   # 0.5% trail distance
 MAX_POS  = 6000
 STOP_M   = 0.8
 TGT_M    = 1.8
