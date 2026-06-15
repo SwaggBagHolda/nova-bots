@@ -54,6 +54,12 @@ def run_options_trader():
     log("Options Trader started — SPY/QQQ 0DTE Calls & Puts | Power Hours")
     ot.run()
 
+
+def run_forex_live():
+    import nova_forex_live as fl
+    log("Forex Live Scalper started — XAU/USD EUR/USD GBP/USD USD/JPY AUD/USD GBP/JPY")
+    fl.run()
+
 def run_ftmo_strategy():
     import nova_ftmo_strategy as ftmo
     log("FTMO Strategy started — 8 Forex pairs | Phase 1 sim | 10k account")
@@ -186,7 +192,7 @@ def health_server():
                 status = {
                     "status": "online",
                     "mode": mode,
-                    "bots_running": 13,
+                    "bots_running": 14,
                     "scan_interval_sec": SCAN_INTERVAL,
                     "confidence_threshold": confidence,
                     "trades_logged": count,
@@ -251,6 +257,7 @@ if __name__ == "__main__":
     threads = [
         threading.Thread(target=health_server,         daemon=True, name="HealthServer"),
         threading.Thread(target=run_options_trader,  daemon=True, name="OptionsTrader"),
+        threading.Thread(target=run_forex_live,      daemon=True, name="ForexLive"),
         threading.Thread(target=run_ftmo_strategy,  daemon=True, name="FTMOStrategy"),
         threading.Thread(target=run_stocks_scalper,    daemon=True, name="StocksScalper"),
         threading.Thread(target=run_chop_scalper,      daemon=True, name="ChopScalper"),
