@@ -1,3 +1,4 @@
+import nova_logger
 #!/usr/bin/env python3
 """
 Nova Stocks Scalper — SPY/QQQ/NVDA/AMZN

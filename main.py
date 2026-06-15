@@ -222,6 +222,14 @@ def health_server():
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
                 self.wfile.write(body)
+            elif self.path == '/trades':
+                s = nova_logger.get_stats()
+                s["timestamp"] = datetime.now(timezone.utc).isoformat()
+                body = json.dumps(s, indent=2).encode()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(body)
             else:
                 self.send_response(404)
                 self.end_headers()
