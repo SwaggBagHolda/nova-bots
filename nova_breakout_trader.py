@@ -15,7 +15,9 @@ H    = {"APCA-API-KEY-ID":KEY,"APCA-API-SECRET-KEY":SEC,"Content-Type":"applicat
 DH   = {"APCA-API-KEY-ID":KEY,"APCA-API-SECRET-KEY":SEC}
 
 # ── RESEARCH-PROVEN PARAMS ──────────────────────────────────────────────────
-ASSETS      = ["BTC/USD","ETH/USD","ADA/USD","AVAX/USD","UNI/USD","EUR/USD","GBP/USD"]
+ASSETS      = ["BTC/USD","ETH/USD","ADA/USD","AVAX/USD","UNI/USD","EUR/USD","GBP/USD","XAU/USD"]
+# Priority boost — proven 100% WR assets get 8pt score bonus
+PRIORITY_BOOST = {"ADA/USD": 8, "UNI/USD": 8, "EUR/USD": 5, "XAU/USD": 5}
 LOOKBACK    = 25       # research: 25-bar high/low
 ADX_MIN     = 30       # research: ADX>=30 confirms real trend
 STOP_MULT   = 1.0      # research: 1.0x ATR

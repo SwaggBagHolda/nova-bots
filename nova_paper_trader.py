@@ -15,13 +15,17 @@ HISTORY_FILE  = "/tmp/candle_predictor_history.json"
 STATE_FILE    = "/tmp/paper_portfolio.json"
 BASE44_URL    = "https://app.base44.com/api/apps/69bf82ce8c526c379bdab3ce/entities/ScalperTrade"
 TOKEN         = os.environ.get("BASE44_SERVICE_TOKEN", "")
-SIZE          = 1000.0    # $ per trade
+BASE_RISK_PCT = 0.08      # 8% of equity per trade (compounding)
 MIN_SCORE     = 72        # brain score gate
 SL_PCT        = 0.006     # 0.6% stop loss
 TP_PCT        = 0.014     # 1.4% take profit  (1:2.3 R:R)
 MAX_POSITIONS = 3
-SCAN_INTERVAL = 120       # 2 minutes
+SCAN_INTERVAL = 60        # 1 minute — faster signal capture
 TIMEOUT_BARS  = 48        # close after 48 scans (~96 min)
+TRAIL_TRIGGER = 0.008     # start trailing after 0.8% gain
+TRAIL_DIST    = 0.005     # trail by 0.5%
+PYRAMID_SCORE = 85        # pyramid if score >= 85
+PYRAMID_EXTRA = 0.5       # add 50% more size on pyramid
 
 ASSETS = {
     "ETHUSD":  "ethereum",
@@ -33,6 +37,8 @@ ASSETS = {
 }
 # Blacklisted per standing rules
 BLACKLIST = {"SOLUSD", "LINKUSD"}
+# Priority assets — proven 100% WR — get +8 score boost
+PRIORITY_BOOST = {"ADAUSD": 8, "UNIUSD": 8, "EURUSD": 5, "GBPUSD": 5}
 # XRP on watch — 50% WR, one more losing run = blacklist
 XRP_TRADES = []
 
@@ -168,6 +174,42 @@ def scan(state, prices, scan_num):
             })
         else:
             unrealized = ((cur - entry) / entry if side == "LONG" else (entry - cur) / entry) * 100
+            # ── TRAILING STOP ──────────────────────────────────────────
+            gain = (cur - entry) / entry if side == "LONG" else (entry - cur) / entry
+            if gain >= TRAIL_TRIGGER:
+                if side == "LONG":
+                    new_trail = cur - (cur * TRAIL_DIST)
+                    if new_trail > pos.get("trail_stop", 0):
+                        pos["trail_stop"] = new_trail
+                        log(f"  📈 TRAIL {sym} stop → {new_trail:.4f}")
+                else:
+                    new_trail = cur + (cur * TRAIL_DIST)
+                    if new_trail < pos.get("trail_stop", cur * 2):
+                        pos["trail_stop"] = new_trail
+                        log(f"  📉 TRAIL {sym} stop → {new_trail:.4f}")
+            # Check if trailing stop hit
+            trail_hit = False
+            if "trail_stop" in pos:
+                if side == "LONG" and cur <= pos["trail_stop"]:
+                    trail_hit = True
+                elif side == "SHORT" and cur >= pos["trail_stop"]:
+                    trail_hit = True
+            if trail_hit:
+                pnl_pct2 = gain
+                pnl_usd2 = pnl_pct2 * pos.get("size", SIZE)
+                state["cash"] += pos.get("size", SIZE) + pnl_usd2
+                state["total_pnl"] += pnl_usd2
+                result2 = "WIN" if pnl_usd2 > 0 else "LOSS"
+                state["wins" if result2 == "WIN" else "losses"] += 1
+                log(f"  🛑 TRAIL CLOSE {sym} → {result2} {pnl_pct2*100:+.2f}% ${pnl_usd2:+.2f}")
+                teach_brain(sym, side.lower(), result2, pnl_pct2 * 100)
+                db_log({"bot_name":"Paper Trader Live","symbol":sym,"signal":side,
+                        "entry_price":round(entry,6),"exit_price":round(cur,6),
+                        "pnl_usd":round(pnl_usd2,2),"pnl_pct":round(pnl_pct2*100,4),
+                        "trade_status":result2,"reason":"TRAIL_STOP",
+                        "scan_time":datetime.now(timezone.utc).isoformat()})
+                state["positions"].remove(pos)
+                continue
             still_open.append(pos)
 
     state["positions"] = still_open
@@ -182,7 +224,9 @@ def scan(state, prices, scan_num):
                 continue
             for side in ["LONG", "SHORT"]:
                 score = brain_score(sym, side.lower())
-                if score >= MIN_SCORE:
+                # Apply priority boost for proven high-WR assets
+        boosted_score = score + PRIORITY_BOOST.get(sym, 0)
+        if boosted_score >= MIN_SCORE:
                     candidates.append((score, sym, side, cur))
 
         candidates.sort(reverse=True)
